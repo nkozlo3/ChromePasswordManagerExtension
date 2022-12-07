@@ -1,3 +1,6 @@
+// create a string to hold the resultant password of length 30
+let password = "";
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.set({ passwords: [] });
 });
@@ -20,6 +23,7 @@ const newPageLoad = async () => {
   for (let i = 0; i < inputFields.length; i++) {
     if (inputFields.item(i).type === "password") {
       const input = inputFields.item(i);
+
       // create a popupDiv centered under the first password field
       const popupDiv = document.createElement("div");
       popupDiv.style.position = "absolute";
@@ -37,26 +41,56 @@ const newPageLoad = async () => {
       // create a title
       const title = document.createElement("h3");
       title.innerHTML = "Create a new password for this site";
-      popupDiv.appendChild(title);
 
       // create an add password button
       const addPasswordButton = document.createElement("button");
       addPasswordButton.innerHTML = "Add Password";
-      popupDiv.appendChild(addPasswordButton);
 
       // create a button to close the popupDiv
       const closeButton = document.createElement("button");
       closeButton.innerHTML = "Fuck off!!";
-      popupDiv.appendChild(closeButton);
+
+      const { passwords } = await chrome.storage.sync.get("passwords");
+      const pagePassword = passwords.find(
+        (password) => password.url === location.href
+      );
+
+      // if there is a saved password for the current page
+      if (pagePassword) {
+        // change the title and button text to reflect the saved password
+        title.innerHTML = "Saved Password";
+        addPasswordButton.innerHTML = "Accept Saved Password";
+        closeButton.innerHTML = "Fuck off!!";
+
+        // add elements to popupDiv and popupDiv to the page
+        popupDiv.appendChild(title);
+        popupDiv.appendChild(addPasswordButton);
+        popupDiv.appendChild(closeButton);
+        document.body.appendChild(popupDiv);
+
+        // accept the saved password when the button is clicked
+        addPasswordButton.addEventListener("click", () => {
+          input.value = pagePassword.password;
+          popupDiv.style.display = "none";
+        });
+
+        // close the popupDiv when the close button is clicked
+        closeButton.addEventListener("click", () => {
+          popupDiv.style.display = "none";
+        });
+        return;
+      }
 
       // add the popupDiv to the page
+      popupDiv.appendChild(title);
+      popupDiv.appendChild(addPasswordButton);
+      popupDiv.appendChild(closeButton);
       document.body.appendChild(popupDiv);
 
       // add a click listener to the add password button
       addPasswordButton.addEventListener("click", () => {
         // change the password field to the new password
-        // create a string to hold the result of length 30
-        let password = "";
+
         // create a string of all possible characters
         const choices =
           "abcdefghijklmnopqrstvxyzABCDEFGHIKLMNOPQRSTVXYZ0123456789!@#$%^&*()-=_+`~|\\?/\"><.,'*][{};:";
@@ -69,6 +103,14 @@ const newPageLoad = async () => {
           // append the character at the random index to the password string
           password += choices[randInt];
         }
+        // extra stuff at the beginning of password: [object HTMLInputElement]
+        password = password.slice(24);
+
+        // save the password to chrome storage
+        passwords.push({ url: location.href, password: password });
+        chrome.storage.sync.set({ passwords });
+
+        // set the input field to the new password
         input.value = password;
         // alert the user of the new password
         alert("Your new password is: " + password);
