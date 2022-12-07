@@ -25,18 +25,18 @@ const newPageLoad = async () => {
       const input = inputFields.item(i);
 
       // create a popupDiv centered under the first password field
-      const popupDiv = document.createElement("div");
-      popupDiv.style.position = "absolute";
+      const popupMenu = document.createElement("div");
+      popupMenu.style.position = "absolute";
       // make an input field for the user to enter a new password
       const inputField = input.getBoundingClientRect();
-      popupDiv.style.left = inputField.left + "px";
-      popupDiv.style.top = inputField.bottom + "px";
-      popupDiv.style.backgroundColor = "white";
-      popupDiv.style.border = "1px solid black";
-      popupDiv.style.padding = "10px";
-      popupDiv.width = "200px";
-      popupDiv.height = "125px";
-      popupDiv.style.borderRadius = "5px";
+      popupMenu.style.left = inputField.left + "px";
+      popupMenu.style.top = inputField.bottom + "px";
+      popupMenu.style.backgroundColor = "white";
+      popupMenu.style.border = "1px solid black";
+      popupMenu.style.padding = "10px";
+      popupMenu.width = "200px";
+      popupMenu.height = "125px";
+      popupMenu.style.borderRadius = "5px";
 
       // create a title
       const title = document.createElement("h3");
@@ -48,7 +48,7 @@ const newPageLoad = async () => {
 
       // create a button to close the popupDiv
       const closeButton = document.createElement("button");
-      closeButton.innerHTML = "Fuck off!!";
+      closeButton.innerHTML = "Shut the fuck up!!";
 
       const { passwords } = await chrome.storage.sync.get("passwords");
       const pagePassword = passwords.find(
@@ -60,32 +60,42 @@ const newPageLoad = async () => {
         // change the title and button text to reflect the saved password
         title.innerHTML = "Saved Password";
         addPasswordButton.innerHTML = "Accept Saved Password";
-        closeButton.innerHTML = "Fuck off!!";
+        closeButton.innerHTML = "Shut the fuck up!!";
 
         // add elements to popupDiv and popupDiv to the page
-        popupDiv.appendChild(title);
-        popupDiv.appendChild(addPasswordButton);
-        popupDiv.appendChild(closeButton);
-        document.body.appendChild(popupDiv);
+        popupMenu.appendChild(title);
+        popupMenu.appendChild(addPasswordButton);
+        popupMenu.appendChild(closeButton);
+        document.body.appendChild(popupMenu);
 
         // accept the saved password when the button is clicked
         addPasswordButton.addEventListener("click", () => {
           input.value = pagePassword.password;
-          popupDiv.style.display = "none";
+          popupMenu.style.display = "none";
+
+          // send the user a notification
+          chrome.notifications.create("You got this!", {
+            type: "basic",
+            iconUrl: "happy.png",
+            title: "Just wanted to remind you",
+            message: "How great you are!",
+            contextmessage: "Your new password is: " + password,
+            priority: 2,
+          });
         });
 
         // close the popupDiv when the close button is clicked
         closeButton.addEventListener("click", () => {
-          popupDiv.style.display = "none";
+          popupMenu.style.display = "none";
         });
         return;
       }
 
       // add the popupDiv to the page
-      popupDiv.appendChild(title);
-      popupDiv.appendChild(addPasswordButton);
-      popupDiv.appendChild(closeButton);
-      document.body.appendChild(popupDiv);
+      popupMenu.appendChild(title);
+      popupMenu.appendChild(addPasswordButton);
+      popupMenu.appendChild(closeButton);
+      document.body.appendChild(popupMenu);
 
       // add a click listener to the add password button
       addPasswordButton.addEventListener("click", () => {
@@ -112,12 +122,20 @@ const newPageLoad = async () => {
 
         // set the input field to the new password
         input.value = password;
-        // alert the user of the new password
-        alert("Your new password is: " + password);
+
+        // send the user a notification of the new password with id of "New Password"
+        chrome.notifications.create("New Password${Date.now()}", {
+          type: "basic",
+          iconUrl: "happy.png",
+          title: "New Password",
+          message: "Your new password is: " + password,
+          contextmessage: "Your new password is: " + password,
+          priority: 2,
+        });
       });
 
       closeButton.addEventListener("click", () => {
-        popupDiv.style.display = "none";
+        popupMenu.style.display = "none";
       });
     }
   }
