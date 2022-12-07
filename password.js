@@ -3,7 +3,7 @@ export default function getPassword() {
     // create a string to hold the result of length 30
     let password = "";
     // create a string of all possible characters
-    const choices = "abcdefghijklmnopqrstvxyzABCDEFGHIKLMNOPQRSTVXYZ0123456789!@#$%^&*()-=_+`~|\\?/\"><.,\'*][{};:'\0'";
+    const choices = "abcdefghijklmnopqrstvxyzABCDEFGHIKLMNOPQRSTVXYZ0123456789!@#$%^&*()-=_+`~|\\?/\"><.,\'*][{};:";
     // get the length of the choices string
     const size = choices.length;
     // loop 30 times
