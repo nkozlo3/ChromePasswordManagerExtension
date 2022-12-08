@@ -11,6 +11,10 @@
     {
         "service_worker": "background.js"     
     },
+    "web_accessible_resources": [ {
+        "resources": ["happy.png"],
+        "matches": ["http://*/*", "https://*/*"]
+    }],
     "permissions": ["tabs", "notifications", "storage", "webNavigation", "scripting", "activeTab", "contextMenus"],
     "host_permissions": ["http://*/*", "https://*/*"]
  }
