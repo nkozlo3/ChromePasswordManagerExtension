@@ -4,54 +4,7 @@ let masterPassword = "";
 
 chrome.runtime.onInstalled.addListener(() => {
   // on install, request a master password from the user. Immediately encrypt the master password and save the encrypted version to chrome storage
-  chrome.storage.sync.set({ masterPassword: "password" });
-
-  // create a popupDiv to hold the password input field and buttons at the top right corner of the page
-  const popupDiv = document.createElement("div");
-  popupDiv.style.position = "absolute";
-  popupDiv.style.right = "0px";
-  popupDiv.style.top = "0px";
-  popupDiv.style.backgroundColor = "white";
-  popupDiv.style.border = "1px solid black";
-  popupDiv.style.padding = "10px";
-  popupDiv.width = "200px";
-  popupDiv.height = "125px";
-  popupDiv.style.borderRadius = "5px";
-
-  // create a title
-  const title = document.createElement("h3");
-  title.innerHTML = "Create a master password";
-
-  // create an input field for the user to enter a master password
-  const inputField = document.createElement("input");
-  inputField.type = "password";
-
-  // create a button to save the master password
-  const saveButton = document.createElement("button");
-  saveButton.innerHTML = "Save Master Password";
-
-  // save the popupDiv to the page
-  document.body.appendChild(popupDiv);
-
-  // on click of the save button
-  saveButton.addEventListener("click", () => {
-    masterPassword = inputField.value;
-    // encrypt the master password
-    masterPassword = CryptoJS.AES.encrypt(masterPassword, "password");
-    // save the encrypted master password to chrome storage
-    chrome.storage.sync.set({ masterPassword });
-  });
-
-  // create a button to close the popupDiv
-  const closeButton = document.createElement("button");
-  closeButton.innerHTML = "Shut";
-
-  // on click of the close button
-  closeButton.addEventListener("click", () => {
-    // remove the popupDiv from the page
-    popupDiv.remove();
-  });
-
+  chrome.storage.sync.set({ masterPassword: "masterPassword" });
   chrome.storage.sync.set({ passwords: [] });
 });
 
