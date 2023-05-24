@@ -3,9 +3,10 @@ let password = "";
 let masterPassword = "";
 
 chrome.runtime.onInstalled.addListener(() => {
-  // on install, request a master password from the user. Immediately encrypt the master password and save the encrypted version to chrome storage
-  chrome.storage.sync.set({ masterPassword: "masterPassword" });
   chrome.storage.sync.set({ passwords: [] });
+  chrome.storage.sync.set({ masterPassword: "" });
+  chrome.storage.sync.set({ beginHash: "" });
+  chrome.storage.sync.set({ endHash: "" });
 });
 
 chrome.webNavigation.onCompleted.addListener(({ tabId, frameId }) => {
@@ -28,12 +29,10 @@ const newPageLoad = async () => {
   }
   // get all password fields
   let inputFields = document.getElementsByTagName("input");
-
   // get the first password field
   for (let i = 0; i < inputFields.length; i++) {
     if (inputFields.item(i).type === "password") {
       const input = inputFields.item(i);
-
       // create a popupDiv centered under the first password field
       const popupMenu = document.createElement("div");
       popupMenu.style.position = "absolute";
@@ -47,11 +46,9 @@ const newPageLoad = async () => {
       popupMenu.width = "200px";
       popupMenu.height = "125px";
       popupMenu.style.borderRadius = "5px";
-
       // create a title
       const title = document.createElement("h3");
       title.innerHTML = "Create a new password for this site";
-
       // create an add password button
       const addPasswordButton = document.createElement("button");
       addPasswordButton.innerHTML = "Add Password";
