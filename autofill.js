@@ -1,4 +1,3 @@
-import getPassword from "./password.js";
 // if a textbox is clicked
 if (isTextboxClicked()) {
   // get the password
